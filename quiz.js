@@ -1,9 +1,10 @@
-// quiz.js
     let questions = [];
     let currentIndex = 0;
+    let num = [0,1,2,3,4,5,6,7,8,9];
+    console.log(currentIndex);
 
     async function fetchQuestions() {
-      const res = await fetch('https://opentdb.com/api.php?amount=10&difficulty=medium&type=multiple&#39;);
+      const res = await fetch('https://opentdb.com/api.php?amount=10&difficulty=medium&type=multiple');
       const data = await res.json();
       questions = data.results;
       showQuestion();
@@ -16,12 +17,15 @@
     }
 
     function showQuestion() {
-      if (currentIndex >= questions.length) {
-        document.getElementById('quiz').innerHTML = '<h2>クイズ終了！</h2>';
-        return;
+      if (currentIndex >= num.length) {
+          document.getElementById('quiz').innerHTML = '<h2>クイズ終了！</h2>';
+          return;
+      }
+      if (currentIndex>=10){
+        procrastinate.style.display="block";
       }
 
-      const q = questions[currentIndex];
+      const q = questions[num[currentIndex]];
       const questionText = decodeHTMLEntities(q.question);
       const options = [...q.incorrect_answers, q.correct_answer];
       shuffleArray(options);
@@ -37,12 +41,11 @@
         btn.onclick = () => {
           if (option === q.correct_answer) {
             alert('正解！');
-            currentIndex++;
-            showQuestion();
           } else {
-            alert('不正解!もう一度選んでください');
+            alert('不正解！正解は「' + decodeHTMLEntities(q.correct_answer) + '」です');
           }
-
+          currentIndex++;
+          showQuestion();
         };
         optionsContainer.appendChild(btn);
       });
@@ -54,7 +57,11 @@
         [array[i], array[j]] = [array[j], array[i]];
       }
     }
- 
-
+    function back(){
+     num.push(currentIndex%10);
+      currentIndex++;
+      showQuestion();
+      console.log(num);
+    }
 
     fetchQuestions();
